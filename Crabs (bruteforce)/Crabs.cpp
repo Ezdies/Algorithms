@@ -2,6 +2,15 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <map>
+
+
+using Map = std::map<int, std::vector<int>>;
+
+struct BoardContainter {
+    std::vector<std::vector<int>> &board;
+    std::vector<std::vector<int>> &originalBoard;
+};
 
 bool isEmpty(std::vector<int> &result, int k) {
     for (int i = 0; i < k; i++) {
@@ -13,7 +22,7 @@ bool isEmpty(std::vector<int> &result, int k) {
 }
 
 void nHetmans(std::vector<int> &result, int k, int n, std::set<std::vector<int>> &solutions,
-              std::vector<std::vector<int>> board) {
+              std::vector<std::vector<int>> &board) {
     if (k == n) {
         if (solutions.find(result) == solutions.end()) {
             solutions.insert(result);
@@ -54,22 +63,21 @@ void printBoard(std::vector<std::vector<int>> &board, const std::vector<int> &re
 }
 
 
-void clearBoard(std::vector<std::vector<int>> &board, const std::vector<std::vector<int>> &originalBoard) {
-
-    for (int i = 0; i < board.size(); i++) {
-        for (int j = 0; j < board[i].size(); j++) {
-            board[i][j] = originalBoard[i][j];
+void clearBoard(BoardContainter &bc) {
+    for (int i = 0; i < bc.board.size(); i++) {
+        for (int j = 0; j < bc.board[i].size(); j++) {
+            bc.board[i][j] = bc.originalBoard[i][j];
         }
     }
 }
 
-void printBoard(std::vector<std::vector<int>> &board, const std::vector<std::vector<int>> &originalBoard,
+void printBoard(BoardContainter &bc,
                 std::set<std::vector<int>> &solutions) {
     int i = 1;
     for (const auto &result: solutions) {
         std::cout << "Board nr. " << i << ":" << std::endl;
-        printBoard(board, result);
-        clearBoard(board, originalBoard);
+        printBoard(bc.board, result);
+        clearBoard(bc);
         std::cout << std::endl;
         i++;
     }
@@ -84,8 +92,8 @@ void fillBoard(std::vector<std::vector<int>> &board) {
     }
 }
 
-void copyBoard(std::vector<std::vector<int>> &board, std::vector<std::vector<int>> &originalBoard) {
-    originalBoard.assign(board.begin(), board.end());
+void copyBoard(BoardContainter &bc) {
+    bc.originalBoard.assign(bc.board.begin(), bc.board.end());
 }
 
 int main() {
@@ -100,13 +108,14 @@ int main() {
     std::vector<int> result(n);
     std::vector<std::vector<int>> board(n, std::vector<int>(n));
     std::vector<std::vector<int>> originalBoard(n, std::vector<int>(n));
+    BoardContainter bc = {board, originalBoard};
     fillBoard(board);
-    copyBoard(board, originalBoard);
+    copyBoard(bc);
 
     std::set<std::vector<int>> solutions;
 
     nHetmans(result, 0, n, solutions, board);
-    printBoard(board, originalBoard, solutions);
+    printBoard(bc, solutions);
 
     return 0;
 }
