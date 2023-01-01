@@ -111,6 +111,14 @@ void printMap(Map &map) {
     }
 }
 
+void printMinVector(Map &map) {
+    std::cout << "\nIndeksy minimalnej sumy\n";
+    auto vec = std::min_element(map.begin(), map.end(), [](const auto &a, const auto &b) { return a < b; })->second;
+    for (const int &elem: vec) {
+        std::cout << elem << " ";
+    }
+}
+
 int main() {
     int n;
     std::cin >> n;
@@ -134,6 +142,7 @@ int main() {
     printBoard(bc, solutions, map);
 
     printMap(map);
+    printMinVector(map);
 
     return 0;
 }
