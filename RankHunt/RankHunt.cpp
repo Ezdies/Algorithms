@@ -1,101 +1,88 @@
+// counting sort
+// musimy znać dziedzinę wartości tego co mamy sortować
+// wiemy, że są z przedziału do 0-99 i 0-9
+// jeśli sortowaliśmyby względem jedynie pierwszej kolumny
+// chcemy zliczyć ile wartości będzie w naszych danych
+// robimy tablicę o wielkości puapek (99)
+// przechowujemy informację jaka osoba się kryje pod danym indeksem
+// Przechodzimy od końca i je wypisujemy
+// druga kolumna jest sortowana w odwrotnej kolejności
+// do drugiej kolumny korzystamy z tablicy dwuwymiarowej
+// adekwatnej do dziedziny wartości
+// dwuwymiarowa puapki x kraby
+// elementami są listy
+// przechodzimy od prawej strony i od góry na dół
+// trick jest taki żeby używać stringów zamiast list
+
+// można zrobić to inaczej na jednowymiarowej tablicy
+// jak są dwie wartości na tym samym indexie, to dodać do stringa np
+
 #include <iostream>
 #include <string>
-
-struct Node
+#define CRABS_MAX 100
+#define TRAPS_MAX 9
+void solve(int *crabs, int *traps, std::string *names, std::string possibilitiesTotalNames[][TRAPS_MAX], int n)
 {
-    std::string m_name;
-    int m_crabs = 0;
-    int m_traps = 0;
-    Node *next = nullptr;
-    Node() = default;
-    Node(std::string name, int crabs, int traps) : m_name(name), m_crabs(crabs), m_traps(traps) {}
 
-    Node &operator=(int val)
-    {
-        m_crabs = val;
-        return *this;
-    }
-
-    Node &operator=(std::string val)
-    {
-        m_name = val;
-        return *this;
-    }
-};
-
-class LinkedList
-{
-private:
-    Node *head;
-
-public:
-    LinkedList()
-    {
-        head = NULL;
-    }
-
-    void insert(const std::string &name, const int crabs, const int traps)
-    {
-        Node *newNode = new Node(name, crabs, traps);
-        newNode->next = head;
-        head = newNode;
-    }
-
-    void printList()
-    {
-        Node *temp = head;
-        while (temp)
-        {
-            std::cout << temp->m_name << " " << temp->m_crabs << " " << temp->m_traps << '\n';
-            temp = temp->next;
-        }
-    }
-
-    void deleteHead()
-    {
-        delete head;
-    }
-
-    Node *getNodeAtIndex(int index)
-    {
-        Node *temp = head;
-        for (int i = 0; i < index; i++)
-        {
-            if (!temp)
-                return NULL;
-            temp = temp->next;
-        }
-        return temp;
-    }
-};
-
-void solve(LinkedList &results, Node *crabsTotal, int n)
-{
     for (int i = 0; i < n; i++)
     {
-        crabsTotal[results.getNodeAtIndex(i)->m_crabs].m_name = results.getNodeAtIndex(i)->m_name;
-        crabsTotal[results.getNodeAtIndex(i)->m_crabs].m_crabs = results.getNodeAtIndex(i)->m_crabs;
+        // jeśli jest już zajęte, to dodaj do tego słowa
+        // if (namesTotal[crabs[i]] != std::string())
+        // {
+        //     namesTotal[crabs[i]].append(" " + names[i]);
+        // }
+        // else
+        // {
+        //  possibilitiesTotalNames[crabs[i]] = names[i];
+        //  }
+        possibilitiesTotalNames[crabs[i]][traps[i]] = names[i];
     }
 }
 
-void printNames(Node *crabsTotal, const int N = 100)
+void printCrabsTotal(int *crabsTotal, const int N = 100)
 {
     for (int i = N - 1; i >= 0; i--)
     {
-        if(crabsTotal[i].m_name != "")
-            std::cout << crabsTotal[i].m_name << ' ';
+        if (crabsTotal[i] != 0)
+        {
+            std::cout << crabsTotal[i] << ' ';
+        }
     }
     std::cout << '\n';
 }
 
-void getInput(LinkedList &results, int n)
+// void printNamesTotal(std::string *namesTotal, const int N = 100)
+// {
+//     for (int i = N - 1; i >= 0; i--)
+//     {
+//         if (namesTotal[i] != std::string())
+//         {
+//             std::cout << namesTotal[i] << ' ';
+//         }
+//     }
+//     std::cout << '\n';
+// }
+
+void printResult(std::string possibilitiesTotal[][TRAPS_MAX])
 {
-    std::string name;
-    int crab, trap;
+    for (int i = CRABS_MAX - 1; i >= 0; i--)
+    {
+        for (int j = TRAPS_MAX - 1; j >= 0; j--)
+        {
+            if (possibilitiesTotal[i][j] != std::string())
+            {
+                std::cout << possibilitiesTotal[i][j] << ' ';
+            }
+        }
+    }
+    std::cout << '\n';
+}
+
+void getInput(std::string *names, int *crabs, int *traps, int n)
+{
     for (int i = 0; i < n; i++)
     {
-        std::cin >> name >> crab >> trap;
-        results.insert(name, crab, trap);
+        std::cin >> names[i] >> crabs[i] >> traps[i];
     }
 }
 
@@ -104,6 +91,14 @@ void freeMemory(std::string *names, int *crabs, int *traps)
     delete[] names;
     delete[] crabs;
     delete[] traps;
+}
+
+void printInput(std::string *names, int *crabs, int *traps, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        std::cout << names[i] << " " << crabs[i] << " " << traps[i] << '\n';
+    }
 }
 
 int main()
@@ -118,17 +113,18 @@ int main()
 
     int *crabs = new int[n];
     int *traps = new int[n];
-    LinkedList results;
 
-    Node crabsTotal[totalCrabsNumber]{};
+    int crabsTotal[totalCrabsNumber]{};
+    int trapsTotal[totalTrapsNumber]{};
+    std::string namesTotal[totalCrabsNumber]{};
+    std::string possibilitiesTotalNames[totalCrabsNumber][totalTrapsNumber]{};
 
-    int possibilitiesTotal[totalCrabsNumber * totalTrapsNumber];
+    getInput(names, crabs, traps, n);
 
-    getInput(results, n);
-    results.printList();
-    printNames(crabsTotal);
-    
-
-    results.deleteHead();
+    solve(crabs, traps, names, possibilitiesTotalNames, n);
+    printResult(possibilitiesTotalNames);
+    // printCrabsTotal(crabsTotal);
+    //  printNamesTotal(namesTotal);
+    //  printInput(names, crabs, traps, n);
     freeMemory(names, crabs, traps);
 }
