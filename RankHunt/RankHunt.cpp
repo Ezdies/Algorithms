@@ -56,9 +56,11 @@ void printResult(std::string possibilitiesTotal[][TRAPS_MAX])
 
 void getInput(std::string *names, int *crabs, int *traps, int n)
 {
+
     for (int i = 0; i < n; i++)
     {
         std::cin >> names[i] >> crabs[i] >> traps[i];
+        names[i].shrink_to_fit();
     }
 }
 
@@ -74,7 +76,7 @@ int main()
     std::ios_base::sync_with_stdio(false);
     std::cout.tie(nullptr);
     std::cin.tie(nullptr);
-    
+
     int n;
     std::cin >> n;
 
