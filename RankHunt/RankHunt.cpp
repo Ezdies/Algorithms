@@ -19,55 +19,31 @@
 
 #include <iostream>
 #include <string>
+
 #define CRABS_MAX 100
-#define TRAPS_MAX 9
+#define TRAPS_MAX 10
+
 void solve(int *crabs, int *traps, std::string *names, std::string possibilitiesTotalNames[][TRAPS_MAX], int n)
 {
 
     for (int i = 0; i < n; i++)
     {
-        // jeśli jest już zajęte, to dodaj do tego słowa
-        // if (namesTotal[crabs[i]] != std::string())
-        // {
-        //     namesTotal[crabs[i]].append(" " + names[i]);
-        // }
-        // else
-        // {
-        //  possibilitiesTotalNames[crabs[i]] = names[i];
-        //  }
-        possibilitiesTotalNames[crabs[i]][traps[i]] = names[i];
-    }
-}
-
-void printCrabsTotal(int *crabsTotal, const int N = 100)
-{
-    for (int i = N - 1; i >= 0; i--)
-    {
-        if (crabsTotal[i] != 0)
+        if (possibilitiesTotalNames[crabs[i]][traps[i]] != std::string())
         {
-            std::cout << crabsTotal[i] << ' ';
+            possibilitiesTotalNames[crabs[i]][traps[i]].append(" " + names[i]);
+        }
+        else
+        {
+            possibilitiesTotalNames[crabs[i]][traps[i]] = names[i];
         }
     }
-    std::cout << '\n';
 }
-
-// void printNamesTotal(std::string *namesTotal, const int N = 100)
-// {
-//     for (int i = N - 1; i >= 0; i--)
-//     {
-//         if (namesTotal[i] != std::string())
-//         {
-//             std::cout << namesTotal[i] << ' ';
-//         }
-//     }
-//     std::cout << '\n';
-// }
 
 void printResult(std::string possibilitiesTotal[][TRAPS_MAX])
 {
     for (int i = CRABS_MAX - 1; i >= 0; i--)
     {
-        for (int j = TRAPS_MAX - 1; j >= 0; j--)
+        for (int j = 0; j < TRAPS_MAX; j++)
         {
             if (possibilitiesTotal[i][j] != std::string())
             {
@@ -93,38 +69,26 @@ void freeMemory(std::string *names, int *crabs, int *traps)
     delete[] traps;
 }
 
-void printInput(std::string *names, int *crabs, int *traps, int n)
-{
-    for (int i = 0; i < n; i++)
-    {
-        std::cout << names[i] << " " << crabs[i] << " " << traps[i] << '\n';
-    }
-}
-
 int main()
 {
+    std::ios_base::sync_with_stdio(false);
+    std::cout.tie(nullptr);
+    std::cin.tie(nullptr);
+    
     int n;
     std::cin >> n;
 
     std::string *names = new std::string[n];
-
-    const int totalCrabsNumber = 100;
-    const int totalTrapsNumber = 9;
-
     int *crabs = new int[n];
     int *traps = new int[n];
 
-    int crabsTotal[totalCrabsNumber]{};
-    int trapsTotal[totalTrapsNumber]{};
-    std::string namesTotal[totalCrabsNumber]{};
+    const int totalCrabsNumber = 100;
+    const int totalTrapsNumber = 10;
+
     std::string possibilitiesTotalNames[totalCrabsNumber][totalTrapsNumber]{};
 
     getInput(names, crabs, traps, n);
-
     solve(crabs, traps, names, possibilitiesTotalNames, n);
     printResult(possibilitiesTotalNames);
-    // printCrabsTotal(crabsTotal);
-    //  printNamesTotal(namesTotal);
-    //  printInput(names, crabs, traps, n);
     freeMemory(names, crabs, traps);
 }
